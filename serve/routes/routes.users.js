@@ -108,10 +108,26 @@ routerUser.post("/register", async (req, res) => {
   });
 
   try {
-    const dataToSave = await data.save();
-    res.status(200).json(dataToSave);
+    const dataUsers = await Model.find();
+    const filterUser = dataUsers.filter((el) => el.username === data.username);
+    if (Object.keys(filterUser).length > 0) {
+      res.status(400).json({ message: "Tài khoản đã tồn tại" });
+    } else {
+      const dataToSave = await data.save();
+      if (dataToSave) {
+        res.status(200).json({
+          message: "Đăng ký tài khoản thành công",
+          statusCode: 200,
+        });
+      } else {
+        res.status(400).json({
+          message: "Đăng ký tài khoản thất bại",
+          statusCode: 200,
+        });
+      }
+    }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message, statusCode: 500 });
   }
 });
 
@@ -128,11 +144,53 @@ routerUser.post("/login", async (req, res) => {
       (el) => el.username === body.username && el.password === body.password
     );
     if (findData && findData.id) {
-      res.status(200).json({ message: "Đăng nhập thành công" });
+      res.status(200).json({
+        message: "Đăng nhập thành công",
+        token: findData,
+        statusCode: 200,
+      });
     } else
-      res.status(400).json({ message: `Tài khoản hoặc mật khẩu không đúng` });
+      res.status(400).json({
+        message: `Tài khoản hoặc mật khẩu không đúng`,
+        statusCode: 400,
+      });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+      statusCode: 500,
+    });
+  }
+});
+
+//Edit Profile
+routerUser.put("/update-profile/:id", async (req, res) => {
+  let data = new Model({
+    _id: req.body.id,
+    username: req.body.username,
+    fullName: req.body.fullName,
+    avatar: req.body.avatar,
+    phone: req.body.phone,
+    address: req.body.address,
+  });
+
+  try {
+    const id = req.params.id;
+    const updatedData = req.body;
+    const options = { new: true };
+
+    const result = await Model.findByIdAndUpdate(id, updatedData, options);
+    console.log(result);
+
+    res.status(200).json({
+      message: "Cập nhật thông tin thành công",
+      data: result,
+      statusCode: 200,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      statusCode: 500,
+    });
   }
 });
 

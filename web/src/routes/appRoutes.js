@@ -4,13 +4,16 @@ import DashboardPages from "../pages/public/dashboard";
 import DashboardPrivatePages from "../pages/private/dashboard";
 import LayoutPublicPages from "../pages/public/layout";
 import LayoutPrivatePages from "../pages/private/layout";
-import LoginPages from "../pages/public/login";
+import LoginPages from "../pages/public";
 import UnauthorizePages from "../pages/unauthorize";
 import DetailPages from "../pages/public/detail";
 import { PATH } from "../constants";
 import TestPages from "../pages/private/test";
+import { useSelector } from "react-redux";
+import { userSelector } from "../redux/user/reducer";
 
 function AppRoutes() {
+  const { user } = useSelector(userSelector);
   const element = [
     {
       path: PATH.LOGIN,
@@ -36,7 +39,7 @@ function AppRoutes() {
     },
     {
       element: (
-        <PrivatePages isAuth={true}>
+        <PrivatePages isAuth={user && user._id}>
           <LayoutPrivatePages layoutAuth />
         </PrivatePages>
       ),

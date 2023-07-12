@@ -6,7 +6,49 @@ const mongoString = process.env.DATABASE_URL;
 
 mongoose.set("strictQuery", false);
 
-mongoose.connect(mongoString);
+mongoose.connect(mongoString, (err, db) => {
+  if (err) throw err;
+  const rolesCollection = db.collection("roles");
+  console.log("Connected to the table", rolesCollection.collectionName);
+
+  const arrayRoles = [
+    {
+      name: "Admin",
+      description: "Quản trị",
+      isActive: true,
+      isAdmin: true,
+    },
+    {
+      name: "Customer",
+      description: "Khách hàng",
+      isActive: true,
+      isAdmin: false,
+    },
+    {
+      name: "Other",
+      description: "Khách vãng lai",
+      isActive: true,
+      isAdmin: false,
+    },
+    {
+      name: "None",
+      description: "None",
+      isActive: false,
+      isAdmin: false,
+    },
+  ];
+
+  rolesCollection.find().toArray((err, res) => {
+    if (err) throw err;
+    if (res.length > 0) return;
+    else {
+      rolesCollection.insert(arrayRoles, function (err, r) {
+        if (err) throw err;
+        console.log(r);
+      });
+    }
+  });
+});
 
 const database = mongoose.connection;
 

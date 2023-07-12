@@ -7,10 +7,11 @@ export default function ModalInfoComponent(props) {
     loading,
     handleSubmitForm,
     handleCloseModal,
-    contentForm,
     stepModal,
     data,
+    children,
   } = props;
+
   return (
     <FormComponent
       form={form}
@@ -22,10 +23,9 @@ export default function ModalInfoComponent(props) {
       }
       handleClose={handleCloseModal}
       textButtonClose="Close"
-      initialValues={data}
       data={data}
     >
-      {contentForm()}
+      {children}
     </FormComponent>
   );
 }

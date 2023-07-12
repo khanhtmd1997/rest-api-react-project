@@ -1,5 +1,29 @@
+// import axios from "axios";
+// import { Modal, notification } from "antd";
+
+// notification.config({
+//   maxCount: 1,
+//   duration: 2,
+// });
+// export const defaultGet = ({url, setLoading, onSuccess}) => {
+//   setLoading(true)
+//   axios.get(url)
+//   .then((res) => {
+//     onSuccess(res.data);
+//     setLoading(false)
+//   })
+//   .catch(function (error) {
+//     console.log(error);
+
+//     setLoading(false)
+//   })
+//   .finally(function () {
+//     setLoading(false)
+//   });
+// }
+
 import { Modal, notification } from "antd";
-import { Axios } from "axios";
+import axios from "axios";
 import { COMMON, PATH } from "../constants";
 
 notification.config({
@@ -7,10 +31,9 @@ notification.config({
   duration: 2,
 });
 
-Axios.interceptors.response.use(
+axios.interceptors.response.use(
   (response) => {
     // do something with the response data
-
     if (response && response.data.statusCode === COMMON.STATUSCODE_500) {
       notification.error({
         message: "Thông báo!",
@@ -19,7 +42,7 @@ Axios.interceptors.response.use(
     }
     if (
       response &&
-      response.data.statusCode === STATUSCODE_200 &&
+      response.data.statusCode === COMMON.STATUSCODE_200 &&
       response.data.message
     ) {
       notification.success({
@@ -35,7 +58,7 @@ Axios.interceptors.response.use(
       duration: 4,
     });
     let mess = "";
-    if (error?.response?.status === STATUSCODE_401) {
+    if (error?.response?.status === COMMON.STATUSCODE_401) {
       window.location.href = PATH.LOGIN;
       localStorage.clear();
       return;
@@ -67,7 +90,7 @@ Axios.interceptors.response.use(
 //-----
 //CALL API GET WITH NOT AUTH
 async function defaultGet(endpoint) {
-  return await Axios({
+  return await axios({
     method: COMMON.METHOD_GET,
     url: endpoint,
   });
@@ -90,11 +113,11 @@ export async function getData({ url, setLoading, onSuccess }) {
 //-----
 //CALL API GET WITH AUTH
 export async function authGet(endpoint) {
-  const token = localStorage.getItem(COMMON.TOKEN_NAME);
-  return await Axios({
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  // const token = localStorage.getItem(COMMON.TOKEN_NAME);
+  return await axios({
+    // headers: {
+    //   Authorization: `Bearer ${token}`,
+    // },
     method: COMMON.METHOD_GET,
     url: endpoint,
   });
@@ -129,7 +152,8 @@ async function defaultPost(endpoint, method, payload) {
     }
     return null;
   });
-  return await Axios({
+
+  return await axios({
     headers: {},
     method: method,
     url: endpoint,
@@ -140,13 +164,14 @@ async function defaultPost(endpoint, method, payload) {
 export async function postData({
   url,
   payload,
-  method = METHOD_POST,
+  method = COMMON.METHOD_POST,
   setLoading,
   onSuccess,
 }) {
   setLoading(true);
   try {
     const res = await defaultPost(url, method, payload);
+
     if (res && res.data) {
       onSuccess(res.data);
     }
@@ -160,7 +185,7 @@ export async function postData({
 //-----
 async function authDelete(endpoint) {
   const token = localStorage.getItem(COMMON.TOKEN_NAME);
-  return await Axios({
+  return await axios({
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -217,10 +242,10 @@ async function authPost(endpoint, method, payload) {
     }
     return {};
   });
-  return await Axios({
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  return await axios({
+    // headers: {
+    //   Authorization: `Bearer ${token}`,
+    // },
     method: method,
     url: endpoint,
     data: body,
@@ -254,13 +279,13 @@ export async function authGetMultiplesRequest({
 }) {
   setLoading(true);
   try {
-    await Axios.all(endpoints.map((endpoint) => authGet(endpoint))).then(
-      (data) => {
+    await axios
+      .all(endpoints.map((endpoint) => authGet(endpoint)))
+      .then((data) => {
         if (data.length) {
           onSuccess(data);
         }
-      }
-    );
+      });
   } catch (err) {
   } finally {
     setLoading(false);
@@ -285,7 +310,7 @@ export async function authGetMultiplesRequest({
 //   setLoading(true);
 //   const token = localStorage.getItem(TOKEN_NAME);
 //   try {
-//     const res = await Axios({
+//     const res = await axios({
 //       headers: {
 //         Accept: "application/json",
 //         Authorization: `Bearer ${token}`,
@@ -309,7 +334,7 @@ export async function authGetMultiplesRequest({
 //         message: `Hãy nhập đủ điều kiện tìm kiếm`,
 //       });
 //     } else if (fileName === "") {
-//       const resTypeText = await Axios({
+//       const resTypeText = await axios({
 //         headers: {
 //           Accept: "application/json",
 //           Authorization: `Bearer ${token}`,

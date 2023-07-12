@@ -9,7 +9,7 @@ export default function ModalConfirmComponent(props) {
     title = "Confirm",
     icon = <ExclamationCircleOutlined />,
     content = "Do you want to delete it?",
-    okText = "Ok",
+    okText = "OK",
     cancelText = COMMON.BUTTON_TEXTCANCEL,
     buttonText = COMMON.BUTTON_TEXTCONFIRM,
     onOk = () => {},

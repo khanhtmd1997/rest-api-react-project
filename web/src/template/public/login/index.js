@@ -1,54 +1,69 @@
-import { Form } from "antd";
-import { GooglePlusOutlined, KeyOutlined } from "@ant-design/icons";
-import { Fragment } from "react";
-import InputComponent from "../../../components/common/input";
-
-export default function LoginTemplate() {
+import { Button, Form, Input } from "antd";
+import { KeyOutlined, UserOutlined } from "@ant-design/icons";
+export default function LoginTemplate(props) {
+  const { loading, form, onLogin } = props;
   return (
-    <Fragment>
-      <Form.Item
-        name="email"
-        rules={[
-          {
-            required: true,
-            message: "Email is empty",
-          },
-          {
-            pattern: new RegExp(
-              // eslint-disable-next-line no-useless-escape
-              /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-            ),
-            message: "Enter a valid email address!",
-          },
-        ]}
-      >
-        <div className="form-field d-flex align-items-center">
-          <GooglePlusOutlined className="icon" />
-          <InputComponent type="email" placeholder="Enter Email" name="email" />
-        </div>
-      </Form.Item>
-      <Form.Item
-        name="password"
-        rules={[
-          {
-            required: true,
-            message: "Password is empty",
-          },
-          {
-            min: 8,
-            message: "Please enter at least 8 characters",
-          },
-        ]}
-      >
-        <div className="form-field d-flex align-items-center">
-          <KeyOutlined className="icon" />
-          <InputComponent
-            type="password"
-            placeholder="Enter password"
-            style={{ backgroundColor: "unset", padding: 0, border: "unset" }}
+    <Form
+      form={form}
+      autoComplete="off"
+      initialValues={{
+        username: "",
+        password: "",
+      }}
+      onFinish={onLogin}
+    >
+      <div className="form">
+        <h2 className="form-title">Sign In</h2>
+        <Form.Item
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: "Không được bỏ trống",
+            },
+          ]}
+        >
+          <Input
+            type="text"
+            placeholder="Username"
+            autoComplete="new-username"
+            addonBefore={<UserOutlined />}
           />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Không được bỏ trống",
+            },
+            {
+              pattern: new RegExp(
+                /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+              ),
+              message:
+                "Tối thiểu 8 ký tự, ít nhất 1 chữ hoa, 1 chữ thường và 1 số",
+            },
+          ]}
+        >
+          <Input.Password
+            type="password"
+            placeholder="Password"
+            autoComplete="new-password"
+            addonBefore={<KeyOutlined />}
+          />
+        </Form.Item>
+        <div className="button-submit">
+          <Button
+            htmlType="submit"
+            type="primary"
+            className="btn"
+            loading={loading}
+          >
+            Sign In
+          </Button>
         </div>
-      </Form.Item>
-    </Fragment>
+      </div>
+    </Form>
   );
 }
